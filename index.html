@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MahiKart+ 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2874f0;--yellow:#ffe500;--pink:#e91e63;--orange:#fb641b;--gold:#ff9f00;--green:#26a541;--bg:#f1f3f6;--white:#fff;--text:#212121;--muted:#757575;--border:#e0e0e0}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;min-height:100vh}
+.app-container{width:100%;max-width:480px;background:var(--bg);min-height:100vh;position:relative;overflow-x:hidden;box-shadow:0 0 40px rgba(0,0,0,.15);padding-bottom:70px}
+
+/* ══ STARFIELD ══ */
+#starfield{position:fixed;inset:0;z-index:999998;pointer-events:none;overflow:hidden;transition:opacity 1.2s ease}
+#starfield.fade-out{opacity:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,2s) ease-in-out infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:var(--min-op,.2);transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.shooting-star{position:absolute;height:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff,rgba(255,255,255,0));border-radius:2px;animation:shoot var(--sd,1.2s) linear forwards;opacity:0}
+@keyframes shoot{0%{opacity:0;transform:translateX(0) translateY(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateX(var(--sx,200px)) translateY(var(--sy,100px))}}
+
+/* ══ CAKE INTRO (kept, enhanced) ══ */
+#cakeIntro{position:fixed;inset:0;background:#0d0d0d;z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:opacity .9s ease}
+#cakeIntro.ci-fade{opacity:0;pointer-events:none}
+.ci-piece{position:absolute;top:-20px;animation:cifall linear infinite;pointer-events:none}
+@keyframes cifall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:.2}}
+.ci-wish{color:rgba(255,255,255,.55);font-size:.95rem;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:28px;font-family:'DM Sans',sans-serif;font-weight:600;text-align:center;transition:opacity .4s}
+.ci-scene{display:flex;flex-direction:column;align-items:center}
+.ci-flame-wrap{cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:transform .2s}
+.ci-flame-wrap:active{transform:scale(.9)}
+.ci-flame{width:22px;height:32px;background:radial-gradient(ellipse at 50% 85%,#fff 10%,#ffe066 35%,#ff9800 65%,rgba(255,60,0,.3) 100%);border-radius:50% 50% 35% 35%;animation:flicker .25s ease-in-out infinite alternate;position:relative;filter:drop-shadow(0 0 8px #ff9800)}
+.ci-flame::after{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:7px;height:12px;background:rgba(255,255,255,.45);border-radius:50% 50% 35% 35%}
+@keyframes flicker{from{transform:scale(1) skewX(0deg)}to{transform:scale(1.12) skewX(4deg) translateY(-2px)}}
+.ci-wick{width:3px;height:10px;background:#555;margin:0 auto}
+.ci-candle{width:14px;height:65px;background:linear-gradient(90deg,#f5f5f5,#e8e8e8,#f5f5f5);border-radius:3px}
+.ci-plate{width:180px;height:12px;background:#c62828;border-radius:4px;margin-top:0}
+.ci-cake{width:180px;height:70px;background:linear-gradient(180deg,#1a1a1a,#111);border:1px solid #2a2a2a;border-top:none;border-radius:0 0 10px 10px}
+.ci-hbd{display:none;flex-direction:column;align-items:center;text-align:center}
+.ci-hbd.show{display:flex;animation:hbdpop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes hbdpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.ci-hbd-line{font-size:3.2rem;font-weight:900;color:#e53935;font-family:'DM Sans',sans-serif;letter-spacing:3px;line-height:1.15;text-shadow:0 0 30px rgba(229,57,53,.5)}
+.ci-hbd-name{font-size:2rem;font-weight:700;color:#fff;margin-top:6px;font-family:'Dancing Script',cursive}
+.ci-hbd-emoji{font-size:3rem;margin-top:10px;animation:wiggle .6s ease infinite alternate}
+/* Music notes burst */
+.music-note{position:fixed;pointer-events:none;z-index:999997;font-size:1.4rem;animation:noteFloat 1.8s ease-out forwards}
+@keyframes noteFloat{0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}100%{opacity:0;transform:translateY(-180px) scale(1.6) rotate(20deg)}}
+
+/* SPLASH */
+.splash{position:fixed;inset:0;background:linear-gradient(145deg,#1a5fd9,#2874f0,#1460d0);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:99999;cursor:pointer;transition:opacity .6s,transform .6s}
+.splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
+.splash-brand{font-family:'Playfair Display',serif;font-size:3.8rem;color:#fff;font-style:italic;letter-spacing:-1px}
+.splash-brand span{color:var(--yellow)}
+.splash-sub{color:rgba(255,255,255,.8);margin-top:8px;font-size:.95rem;letter-spacing:2px;text-transform:uppercase}
+.splash-loader{margin-top:40px;width:44px;height:44px;border:3px solid rgba(255,255,255,.2);border-top:3px solid var(--yellow);border-radius:50%;animation:spin .9s linear infinite}
+.splash-hint{color:rgba(255,255,255,.45);font-size:.8rem;margin-top:24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.heart-float{position:absolute;font-size:1.5rem;animation:floatUp 4s ease-in infinite;pointer-events:none;opacity:0}
+@keyframes floatUp{0%{transform:translateY(0) scale(.8);opacity:.8}100%{transform:translateY(-120vh) scale(1.3);opacity:0}}
+
+/* HEADER */
+header{background:linear-gradient(90deg,#1e65e0,#2874f0);padding:14px 15px 12px;color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 3px 12px rgba(40,116,240,.35)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.brand{font-family:'Playfair Display',serif;font-size:1.55rem;font-style:italic;color:#fff}
+.brand span{color:var(--yellow)}
+.header-icons{display:flex;gap:14px}
+.header-icons .h-icon{font-size:1.3rem;cursor:pointer;line-height:1}
+.search-bar{background:#fff;padding:10px 14px;border-radius:6px;color:#878787;font-size:.88rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'DM Sans',sans-serif}
+.search-dropdown{display:none;background:#fff;position:absolute;top:100%;left:0;right:0;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:201;border-radius:0 0 10px 10px;overflow:hidden}
+.search-dropdown p{padding:13px 16px;border-bottom:1px solid #f5f5f5;font-size:.88rem;color:#333;display:flex;align-items:center;gap:12px;cursor:pointer}
+
+/* VIEWS */
+.view{display:none;animation:fadeSlide .35s ease}
+.view.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HOME */
+.banner{background:linear-gradient(135deg,#ffe500,#ffcc00);padding:20px 18px;text-align:center;border-bottom:1px solid rgba(0,0,0,.07)}
+.banner h2{font-family:'Dancing Script',cursive;font-size:2rem;color:var(--blue);line-height:1.2}
+.banner p{font-size:.88rem;color:#555;margin-top:6px;font-weight:500}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.product-item{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s;border:1px solid var(--border)}
+.product-item:active{transform:scale(.96)}
+.photo-placeholder{width:100%;aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.photo-placeholder img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;z-index:2}
+.ph-emoji{font-size:3.2rem;position:relative;z-index:1}
+.ph-hint{display:none}
+.photo-placeholder:has(img) .ph-emoji{display:none}
+.product-item .label{padding:8px 10px 0;font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.product-item .price{padding:4px 10px 10px;font-size:.78rem;font-weight:700;color:var(--blue)}
+.product-item .price span{color:var(--pink);font-size:.75rem;margin-left:4px}
+
+/* OVERLAY */
+.overlay-page{position:fixed;inset:0;background:var(--white);z-index:5000;transform:translateX(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.overlay-page.open{transform:translateX(0)}
+.ov-header{padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:14px;position:sticky;top:0;background:#fff;z-index:10;font-weight:600;font-size:1rem;flex-shrink:0}
+.ov-header .back-btn{cursor:pointer;padding:6px;border-radius:50%;font-size:1.2rem}
+.ov-scroll{flex:1;overflow-y:auto;padding-bottom:0}
+.ov-img-wrap{width:100%;min-height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.ov-img-wrap .big-emoji{font-size:5rem}
+.ov-details{padding:20px}
+.ov-details h2{font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:8px}
+.ov-price{font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:16px}
+.offer-card{background:#fff5f8;border:1px dashed var(--pink);padding:14px;border-radius:10px;font-size:.86rem;color:#444;margin-bottom:16px;line-height:1.6}
+.ov-desc{font-size:.88rem;color:#666;line-height:1.7}
+.shayari-card{margin-top:18px;background:linear-gradient(135deg,#fff0f6,#f0f4ff);border:1px solid #f0c0d8;border-left:4px solid var(--pink);border-radius:0 14px 14px 0;padding:18px 16px;margin-bottom:0}
+.shayari-label{font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--pink);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.shayari-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#333;line-height:2.2;white-space:pre-line}
+.mem-action-bar{display:flex;flex-shrink:0;box-shadow:0 -4px 16px rgba(0,0,0,.12)}
+.mem-action-bar button{flex:1;padding:16px;border:none;font-size:.95rem;font-weight:700;cursor:pointer;color:#fff;font-family:'DM Sans',sans-serif;transition:filter .2s}
+.mem-action-bar button:active{filter:brightness(.9)}
+.btn-save{background:var(--gold)}
+.btn-unwrap{background:var(--orange)}
+
+/* CONFETTI */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.popup-overlay.show{display:flex}
+.popup-box{background:#fff;padding:36px 28px;border-radius:20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:320px;width:85%;animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.popup-box .gift-icon{font-size:4.5rem;display:block;margin-bottom:16px;animation:wiggle .6s ease infinite alternate}
+@keyframes wiggle{from{transform:rotate(-10deg) scale(1)}to{transform:rotate(10deg) scale(1.1)}}
+.popup-box h3{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text)}
+.popup-box p{color:var(--muted);font-size:.88rem;margin-top:8px;line-height:1.6}
+.popup-close{margin-top:20px;padding:10px 28px;background:var(--blue);color:#fff;border:none;border-radius:30px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
+.confetti-piece{position:absolute;top:-20px;border-radius:3px;animation:confettiFall linear forwards}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* JOURNEY */
+.journey-header{background:linear-gradient(135deg,var(--blue),#1a55c0);padding:20px 18px;color:#fff}
+.journey-header h2{font-family:'Dancing Script',cursive;font-size:2rem;color:var(--yellow)}
+.journey-header p{font-size:.85rem;opacity:.8;margin-top:4px}
+.journey-id{background:rgba(255,255,255,.15);padding:4px 10px;border-radius:20px;font-size:.78rem;display:inline-block;margin-top:8px;font-weight:600}
+.tracking-wrap{padding:20px 16px;background:var(--white);border-bottom:8px solid var(--bg)}
+.track-step{display:flex;margin-bottom:32px;position:relative}
+.track-step:last-child{margin-bottom:0}
+.track-step::after{content:'';position:absolute;left:16px;top:36px;width:2px;height:calc(100% + 8px);z-index:0}
+.track-step:last-child::after{display:none}
+.ts-green::after{background:var(--green)}
+.ts-red::after{background:#ef5350}
+.ts-blue::after{background:var(--blue)}
+.ts-orange::after{background:var(--orange)}
+.t-icon{width:36px;min-width:36px;height:36px;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;z-index:1;position:relative;letter-spacing:0}
+.ti-green{background:var(--green);box-shadow:0 0 0 5px #e8f5e9}
+.ti-red{background:#ef5350;box-shadow:0 0 0 5px #ffebee}
+.ti-blue{background:var(--blue);box-shadow:0 0 0 5px #e8f0fe}
+.ti-orange{background:var(--orange);box-shadow:0 0 0 5px #fff3e0;animation:pulseGlow 2s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 5px #fff3e0}50%{box-shadow:0 0 0 8px #ffe0b2}}
+.t-body{margin-left:18px}
+.t-body h4{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.t-body p{font-size:.85rem;color:#666;line-height:1.7}
+.rhyme-card{margin-top:10px;background:linear-gradient(135deg,#f8f0ff,#fff0f5);border-left:3px solid var(--pink);padding:12px 14px;border-radius:0 10px 10px 0;font-style:italic;font-size:.84rem;color:#555;line-height:1.8}
+.quote-card{margin:16px;background:linear-gradient(135deg,#fff8e1,#fce4ec);border-radius:14px;padding:20px;font-size:.9rem;color:#333;line-height:2;font-style:italic;text-align:center;border:1px solid #f8d7da;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.group-card{margin:0 16px 4px;background:linear-gradient(135deg,#f3e8ff,#fce4ec);border-radius:16px;padding:22px 20px;text-align:center;border:1px solid #e1bee7;box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.group-card-line{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;color:#444;line-height:2.1}
+.group-card-line.highlight-line{color:#c44ddb;font-weight:700;font-size:1.05rem;margin-top:4px}
+
+/* Highlight / video sections */
+.section-label{padding:14px 16px;font-size:.95rem;font-weight:700;background:var(--white);border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center}
+.section-label span:last-child{font-size:.8rem;color:var(--blue)}
+.highlight-card{background:var(--white);margin:10px;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);border:1px solid var(--border)}
+.hl-tag{display:inline-block;background:var(--blue);color:#fff;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:6px}
+.highlight-photo{width:100%;height:auto;min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#999;font-size:.82rem;overflow:hidden}
+.highlight-photo .ph-big{font-size:2.8rem}
+.highlight-body{padding:14px;font-size:.85rem;color:#444;line-height:1.7}
+.video-card{background:var(--white);margin:10px;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);border:1px solid var(--border)}
+.video-placeholder{background:#111;height:140px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:rgba(255,255,255,.6);font-size:.82rem}
+.video-placeholder .play-btn{width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.video-body{padding:12px 14px;font-size:.82rem;color:#888}
+
+/* Finale — "Sirf Tere Liye" now clickable */
+.finale{margin:10px;border-radius:20px;background:linear-gradient(145deg,#1a55c0,#2874f0,#1e65e0);padding:40px 24px;text-align:center;color:#fff;box-shadow:0 12px 32px rgba(40,116,240,.4);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s}
+.finale:active{transform:scale(.98)}
+.finale h2{font-family:'Dancing Script',cursive;font-size:2.6rem;color:var(--yellow)}
+.finale p{margin-top:14px;font-size:.95rem;line-height:1.9;opacity:.9}
+.finale strong{color:var(--yellow)}
+.finale-hint{margin-top:20px;background:rgba(255,255,255,.15);border-radius:30px;padding:8px 20px;font-size:.8rem;display:inline-block;border:1px solid rgba(255,255,255,.3);animation:pulse-hint 2s ease-in-out infinite}
+@keyframes pulse-hint{0%,100%{opacity:.7}50%{opacity:1}}
+
+/* NICKNAMES */
+.nick-header{padding:18px 16px 10px;background:var(--white);border-bottom:1px solid #f5f5f5}
+.nick-header h2{font-family:'Dancing Script',cursive;font-size:1.9rem;color:var(--text)}
+.nick-header p{font-size:.84rem;color:var(--muted);margin-top:3px}
+.nick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 14px 0}
+.nick-card{background:var(--white);border-radius:16px;padding:24px 14px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);border:1px solid var(--border);transition:transform .2s}
+.nick-card:active{transform:scale(.95)}
+.nick-emoji{font-size:2.6rem;display:block;margin-bottom:10px}
+.nick-card h3{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:700;color:var(--blue)}
+.nick-card p{font-size:.78rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.nick-card.gold{border-top:4px solid var(--gold)}
+.nick-card.pink{border-top:4px solid var(--pink)}
+.nick-card.blue{border-top:4px solid var(--blue)}
+.nick-card.green{border-top:4px solid var(--green)}
+.nick-full{margin:12px 14px 14px;background:var(--white);border-radius:16px;padding:24px 20px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);border:1px solid var(--border);border-top:4px solid var(--orange)}
+.nick-full .nick-emoji{font-size:2.6rem;display:block;margin-bottom:10px}
+.nick-full h3{font-family:'DM Sans',sans-serif;font-size:1.1rem;font-weight:700;color:var(--blue)}
+.nick-full p{font-size:.82rem;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* NOTIFS */
+.notif-header{padding:14px 16px;font-size:1rem;font-weight:700;background:#fff;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.notif-header span{font-size:.82rem;color:var(--blue);font-weight:600}
+.notif-item{background:var(--white);padding:16px;border-bottom:1px solid #f5f5f5;display:flex;gap:16px;align-items:flex-start;cursor:pointer}
+.notif-icon{width:44px;min-width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.ni-pink{background:#fce4ec}
+.ni-blue{background:#e8f0fe}
+.ni-gold{background:#fff8e1}
+.ni-green{background:#e8f5e9}
+.ni-purple{background:#f3e5f5}
+.notif-item h4{font-size:.9rem;font-weight:600;margin-bottom:3px}
+.notif-item p{font-size:.82rem;color:var(--muted);line-height:1.5}
+
+/* ACCOUNT */
+.acc-hero{background:linear-gradient(135deg,#1a55c0,#2874f0);padding:28px 20px;display:flex;align-items:center;gap:18px}
+.acc-avatar{width:72px;height:72px;min-width:72px;border-radius:50%;background:var(--yellow);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;box-shadow:0 4px 14px rgba(0,0,0,.25);overflow:hidden;border:3px solid rgba(255,255,255,.4)}
+.acc-avatar img{width:100%;height:100%;object-fit:cover;object-position:center center;border-radius:50%;display:block}
+.acc-info h2{color:#fff;font-size:1.2rem;font-weight:700}
+.acc-info p{color:rgba(255,255,255,.7);font-size:.82rem;margin-top:4px}
+.acc-badge{display:inline-block;background:var(--yellow);color:var(--blue);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px}
+.acc-list{background:var(--white);margin-top:10px}
+.acc-row{padding:16px 20px;border-bottom:1px solid #f5f5f5;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .15s}
+.acc-row:hover{background:#fafafa}
+.acc-row-left{display:flex;align-items:center;gap:14px;font-size:.9rem;font-weight:500}
+.acc-row-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.acc-chevron{font-size:.9rem;color:#ccc}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);display:flex;justify-content:space-around;padding:10px 0 8px;box-shadow:0 -2px 16px rgba(0,0,0,.08);z-index:900;border-top:1px solid var(--border)}
+.nav-item{display:flex;flex-direction:column;align-items:center;color:#aaa;font-size:.68rem;gap:4px;cursor:pointer;padding:4px 10px;border-radius:10px;transition:color .2s;font-weight:500}
+.nav-item .nav-emoji{font-size:1.2rem;line-height:1}
+.nav-item.active{color:var(--blue)}
+.nav-item.active .nav-emoji{animation:navPop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes navPop{from{transform:scale(.7)}to{transform:scale(1)}}
+
+/* UPI */
+.upi-page{padding:24px 20px;text-align:center}
+.upi-title{font-family:'Dancing Script',cursive;font-size:2rem;color:var(--blue);margin-bottom:6px}
+.upi-sub{font-size:.85rem;color:var(--muted);margin-bottom:28px}
+.qr-frame{display:inline-block;padding:16px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);border:2px solid var(--border);margin-bottom:24px}
+.qr-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.q{width:18px;height:18px;border-radius:2px}
+.q.b{background:#1a1a2e}
+.q.w{background:transparent}
+.upi-id-box{background:linear-gradient(135deg,#e8f0fe,#f0f4ff);border:1px solid #c5d5fb;border-radius:12px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.upi-id-label{font-size:.75rem;color:var(--muted);font-weight:600;margin-bottom:3px}
+.upi-id-val{font-size:.95rem;font-weight:700;color:var(--blue)}
+.upi-copy-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.upi-note{background:linear-gradient(135deg,#fff8e1,#fff3e0);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 16px;text-align:left;font-size:.85rem;color:#555;line-height:1.8;margin-bottom:20px}
+.upi-amount-row{display:flex;gap:10px;margin-bottom:10px}
+.upi-amount-box{flex:1;background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.amt-label{font-size:.72rem;color:var(--muted);font-weight:600}
+.amt-val{font-size:1.4rem;font-weight:800;color:var(--pink);margin-top:4px}
+.upi-pay-btn{width:100%;padding:16px;background:linear-gradient(90deg,var(--green),#1e9c3a);color:#fff;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(38,165,65,.3)}
+
+/* MEMORIES POPUP */
+.mem-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.mem-popup-overlay.show{display:flex}
+.mem-popup-box{background:#fff;border-radius:24px;max-width:340px;width:88%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+.mem-popup-top{background:linear-gradient(135deg,#ff6b9d,#c44ddb);padding:28px 24px 20px;text-align:center;color:#fff}
+.mem-popup-top .mem-icon{font-size:3.5rem;display:block;margin-bottom:10px}
+.mem-popup-top h3{font-family:'Playfair Display',serif;font-size:1.4rem}
+.mem-popup-body{padding:20px 24px 28px;text-align:center}
+.mem-hindi{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#333;line-height:2;margin-bottom:16px;white-space:pre-line}
+.mem-english{font-size:.85rem;color:#666;line-height:1.8;padding:12px 14px;background:#f9f9f9;border-radius:10px;margin-bottom:20px}
+.mem-popup-close{background:linear-gradient(90deg,#ff6b9d,#c44ddb);color:#fff;border:none;border-radius:30px;padding:11px 32px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* TOAST */
+.copy-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 20px;border-radius:20px;font-size:.82rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;white-space:nowrap}
+.copy-toast.show{opacity:1}
+.divider{height:8px;background:var(--bg)}
+
+/* ══ POLAROID GALLERY ══ */
+.gallery-header{padding:18px 16px 10px;background:var(--white);border-bottom:1px solid #f5f5f5}
+.gallery-header h2{font-family:'Dancing Script',cursive;font-size:1.9rem;color:var(--text)}
+.gallery-header p{font-size:.84rem;color:var(--muted);margin-top:3px}
+.polaroid-grid{display:grid;grid-template-columns:1fr;gap:20px;padding:20px 16px}
+.polaroid{background:#fff;padding:10px 10px 28px;box-shadow:0 6px 24px rgba(0,0,0,.14);cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative}
+.polaroid:nth-child(1){transform:rotate(-2.5deg)}
+.polaroid:nth-child(2){transform:rotate(1.8deg);margin-top:14px}
+.polaroid:nth-child(3){transform:rotate(2.2deg);margin-top:-8px}
+.polaroid:nth-child(4){transform:rotate(2.2deg);margin-top:-8px}
+.polaroid:nth-child(5){transform:rotate(-1.4deg);margin-top:10px}.polaroid:nth-child(5) .polaroid-photo{aspect-ratio:1;max-height:none}
+.polaroid:nth-child(6){transform:rotate(-3deg);margin-top:-4px}
+.polaroid:nth-child(7){transform:rotate(2.5deg);margin-top:8px}
+.polaroid:nth-child(8) .polaroid-photo{
+  aspect-ratio: 3/4;
+  min-height: 460px;
+  max-height: none;
+  background: #fff;
+}
+
+.polaroid:nth-child(8) .polaroid-photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+}
+.polaroid:nth-child(9){transform:rotate(2.8deg);margin-top:-5px}
+.polaroid:nth-child(10){transform:rotate(-1.6deg);margin-top:9px}
+.polaroid:active{transform:rotate(0deg) scale(1.04)!important;box-shadow:0 16px 48px rgba(0,0,0,.22);z-index:10}
+.polaroid-photo{width:100%;aspect-ratio:auto;min-height:260px;max-height:420px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;overflow:hidden;position:relative}
+.polaroid-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:absolute;inset:0}
+.polaroid-upload-hint{display:none}
+.polaroid-emoji{position:relative;z-index:1;transition:opacity .2s}
+.polaroid-photo.has-img .polaroid-emoji{display:none}
+
+/* ══ LIGHTBOX ══ */
+#lightbox{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center}
+#lightbox.open{display:flex}
+.lb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(18px)}
+.lb-card{position:relative;z-index:1;background:#fff;padding:12px 12px 36px;max-width:340px;width:88%;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:lbPop .35s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes lbPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.lb-img{width:100%;max-height:72vh;display:flex;align-items:center;justify-content:center;font-size:5rem;overflow:hidden;background:#f0f0f0}
+.lb-img img{width:100%;max-height:72vh;object-fit:contain;display:block}
+.lb-close{position:absolute;top:-16px;right:-16px;width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3);font-weight:700;color:#333}
+.lb-nav{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.lb-btn{background:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;transition:transform .15s;font-weight:700}
+.lb-btn:active{transform:scale(.9)}
+
+/* ══ WAX SEAL / SECRET LETTER ══ */
+#letterOverlay{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;background:rgba(10,6,2,.94);backdrop-filter:blur(8px)}
+#letterOverlay.open{display:flex}
+.letter-wrap{width:92%;max-width:380px;position:relative}
+.wax-seal-container{text-align:center;margin-bottom:16px}
+.wax-seal{font-size:5rem;cursor:pointer;display:inline-block;animation:sealPulse 2s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(180,30,30,.6));transition:transform .3s}
+.wax-seal:active{transform:scale(.88)}
+@keyframes sealPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(180,30,30,.5))}50%{filter:drop-shadow(0 0 22px rgba(220,50,50,.9))}}
+.wax-seal.cracked{animation:none;filter:drop-shadow(0 0 8px rgba(100,60,20,.4));transform:scale(.9) rotate(-8deg);opacity:.6}
+.seal-hint{color:rgba(255,255,255,.45);font-size:.78rem;letter-spacing:2px;text-transform:uppercase;margin-top:6px;font-family:'DM Sans',sans-serif}
+.envelope{background:linear-gradient(145deg,#fef9f0,#fdf3e0);border-radius:6px;padding:28px 22px 24px;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid rgba(180,140,60,.3);position:relative;overflow:hidden;max-height:65vh;overflow-y:auto}
+.envelope::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0932a,#f0c040,#c0932a)}
+.letter-date{font-size:.75rem;color:#a08060;text-align:right;margin-bottom:18px;font-style:italic;font-family:'Playfair Display',serif}
+.letter-text{font-family:'Playfair Display',serif;font-style:italic;font-size:.92rem;color:#3a2a1a;line-height:2;min-height:60px}
+.cursor-blink{display:inline-block;width:2px;height:1.1em;background:#3a2a1a;animation:blink .7s ease-in-out infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.letter-sig{margin-top:24px;text-align:right;font-family:'Dancing Script',cursive;font-size:1.3rem;color:#8B4513}
+.letter-close-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.6);border:none;border-radius:50%;width:32px;height:32px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ══ STARFIELD ══ -->
+<div id="starfield"></div>
+
+<!-- ══ BIRTHDAY CAKE INTRO ══ -->
+<div id="cakeIntro">
+  <div class="ci-wish" id="ciWish">Make a wish &amp; tap the flame 🕯️</div>
+  <div class="ci-scene">
+    <div class="ci-flame-wrap" id="ciFlameWrap" onclick="tapFlame()">
+      <div class="ci-flame" id="ciFlame"></div>
+      <div class="ci-wick"></div>
+    </div>
+    <div class="ci-candle"></div>
+    <div class="ci-plate"></div>
+    <div class="ci-cake"></div>
+  </div>
+  <div class="ci-hbd" id="ciHbd">
+    <div class="ci-hbd-line">HAPPY</div>
+    <div class="ci-hbd-line">BIRTHDAY</div>
+    <div class="ci-hbd-name">Mahima 💛</div>
+    <div class="ci-hbd-emoji">🎂</div>
+  </div>
+</div>
+
+<div class="app-container">
+
+<!-- SPLASH -->
+<div class="splash" id="splash" onclick="closeSplash()">
+  <div class="heart-float" style="left:15%;animation-delay:0s;animation-duration:3.5s">❤️</div>
+  <div class="heart-float" style="left:40%;animation-delay:.8s;animation-duration:4.2s">💛</div>
+  <div class="heart-float" style="left:70%;animation-delay:1.5s;animation-duration:3.8s">🌸</div>
+  <div class="heart-float" style="left:85%;animation-delay:.3s;animation-duration:4.5s">✨</div>
+  <div class="heart-float" style="left:25%;animation-delay:2s;animation-duration:3.2s">💕</div>
+  <div class="splash-brand">Mahi<span>Kart+</span></div>
+  <div class="splash-sub">A Birthday Special</div>
+  <div class="splash-loader"></div>
+  <div class="splash-hint">tap anywhere to enter 💛</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="top-bar">
+    <div class="brand">Mahi<span>Kart+</span></div>
+    <div class="header-icons">
+      <span class="h-icon" onclick="showView('notifs')">🔔</span>
+      <span class="h-icon" onclick="showConfetti()">🎁</span>
+    </div>
+  </div>
+  <div class="search-bar" onclick="toggleSearch()">
+    <span>🔍 &nbsp;Search for "Mahi's Smile"</span>
+    <span style="font-size:1rem;color:#aaa">📷</span>
+  </div>
+  <div class="search-dropdown" id="searchDrop">
+    <p>🌸 Mahi's best moments</p>
+    <p>💛 Why Mahi is awesome</p>
+    <p>📸 Photo gallery of her</p>
+    <p>🎂 Birthday surprises</p>
+  </div>
+</header>
+
+<!-- ══ HOME ══ -->
+<div class="view active" id="view-home">
+  <div class="banner">
+    <h2>Happy Birthday, Mahi! 🎉🩷</h2>
+    <p>Teri khushi hi meri sabse badi daulat hai 💛<br>Tap any memory to unwrap your birthday gift ✨</p>
+  </div>
+  <div class="product-grid">
+    <div class="product-item" onclick="openMemory(0)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#ff9a9e,#fecfef)">
+        <img src="photo1.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">😊</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">That Cute Smile ❤️</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+    <div class="product-item" onclick="openMemory(1)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#667eea,#764ba2)">
+        <img src="photo2.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">💼</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">Corporate HR Look 💼</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+    <div class="product-item" onclick="openMemory(2)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#f093fb,#f5576c)">
+        <img src="photo3.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">✨</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">The Stunning One ✨</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+    <div class="product-item" onclick="openMemory(3)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#f6d365,#fda085)">
+        <img src="photo4.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">📸</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">Epic Old Pic 📸</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+    <div class="product-item" onclick="openMemory(4)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">
+        <img src="photo5.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">😄</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">Mahi Being Mahi 😄</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+    <div class="product-item" onclick="openMemory(5)">
+      <div class="photo-placeholder" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">
+        <img src="photo6.jpg" onerror="this.style.display='none'">
+        <span class="ph-emoji">🌙</span><span class="ph-hint">📷 Add Photo</span>
+      </div>
+      <div class="label">Us, Always 🌙</div>
+      <div class="price">Priceless <span>✨</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOURNEY ══ -->
+<div class="view" id="view-journey">
+  <div class="journey-header">
+    <h2>The Journey of Us 🎀</h2>
+    <p>From a stranger to someone special — every step of the way</p>
+    <div class="journey-id">#MAHI-2805</div>
+  </div>
+
+  <div class="tracking-wrap">
+    <div class="track-step ts-green">
+      <div class="t-icon ti-green">K</div>
+      <div class="t-body">
+        <h4>1. First Glance — Pehli Nazar</h4>
+        <p>Tu class aur university ki pehli ladki thi jise maine notice kiya tha. Par tujhse baat karne ki zero himmat thi mere andar. Das aaste-jaate "Hi" aur "Hello" hota tha, aur teri ek nazar pe main pagal ho jaata tha. 😅</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-red">
+      <div class="t-icon ti-red">R</div>
+      <div class="t-body">
+        <h4>2. Connection Failed — Flop Masterplans</h4>
+        <p>Tere kareeb aane ke liye maine bohot jugaad lagaye. Apne dost ka sahara liya, tere doston ko car mein invite kiya... par sab flop! Main haar maan ke life mein busy ho gaya. Luckily "Fuddu Log" waale group mein hum saath the.</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-green">
+      <div class="t-icon ti-green">G</div>
+      <div class="t-body">
+        <h4>3. Dispatched — March Magic</h4>
+        <p>March mein aakhir humari dosti ho hi gayi. Aur tab wo destiny wala moment aaya — jab mujhe pata chala ki Bhiwani ki ladki! Hisar mein mere ghar ke bilkul paas apni Tai ke yahan rehti hai! Kya coincidence tha yaar! 😅</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-blue">
+      <div class="t-icon ti-blue">B</div>
+      <div class="t-body">
+        <h4>4. In Transit — Baarish, Bike &amp; Vada Pav</h4>
+        <p>Hum jab bhi milte hain toofan ya baarish kyun aati hai? Wo pehli baarish wali bike ride bina kisi dost ke... aur Vada Pav ke liye humara common pyaar — wahin se bond strong hone laga. 🌧️❤️</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-blue">
+      <div class="t-icon ti-blue">💬</div>
+      <div class="t-body">
+        <h4>5. Internship Ke Din — Chat Pe Sach 💬</h4>
+        <p>Internship ke waqt — humari baat chat pe hoti thi. Ek din maine apne puraane "flop masterplans" ki poori kahani tujhe chat pe bata di — woh sab kuch jo maine tujhse karne ki koshish ki thi. Tujhe sun ke shocked zaroor hua hoga 😂 — woh expression imagine kar ke aaj bhi hasi aati hai. Tab pehli baar laga ki sach bol diya. 😅</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-red">
+      <div class="t-icon ti-red">🚫</div>
+      <div class="t-body">
+        <h4>6. Signal Lost — The Block 😶</h4>
+        <p>Phir meri galti ki wajah se... aur bas — Classic teri reaction — seedha block! 😅 Na koi explanation ka mauka, na koi sai. Poori screen pe sirf "Message Failed" wala feel tha. Kuch waqt ke liye sab khamoshi mein dub gaya.</p>
+        <div class="rhyme-card" style="border-left-color:#ef5350;background:linear-gradient(135deg,#ffebee,#fff0f0)">
+          Ek lafz ne dil tod diya tha mera,<br>
+          Screen pe "Blocked" — aur main thoda sa toot gaya. 💔<br>
+          Par andar se pata tha — ye kahani adhuri hai,<br>
+          Kuch toh tha jo khatam nahi hua tha. 🌸
+        </div>
+      </div>
+    </div>
+
+    <div class="track-step ts-blue">
+      <div class="t-icon ti-blue">✅</div>
+      <div class="t-body">
+        <h4>7. Reconnected — 13 January Magic ✨</h4>
+        <p>13 January is saal — finally hum aamne-saamne mile aur saari confusions clear ho gayi! Jo baat chat pe shuru hui thi, woh real life mein aaj seedhi ho gayi. Ek mulaqat mein jaise poori zindagi ka bojh utar gaya. 🥲</p>
+      </div>
+    </div>
+
+    <div class="track-step ts-orange">
+      <div class="t-icon ti-orange">💛</div>
+      <div class="t-body">
+        <h4>8. Plot Twist — 150km &amp; Tu Ne Wapas Joda 💛</h4>
+        <p>13 Jan ke kuch din baad — meri zid ne mujhe 150 km door tere office tak pahuncha diya. Bina mile, khali haath wapas aa gaya. Us ek foolish trip ki wajah se humara poora group toot gaya. 💔 Par jab sab ek doosre se door ho gaye — tu thi jo sab ko wapas layi, sab ko phir se ikatha kiya. Jo group tootne ka reason ban gaya tha, usse tune hi wapas joda. 💛</p>
+        <div class="rhyme-card" style="border-left-color:var(--orange);background:linear-gradient(135deg,#fff8e1,#fff3e0)">
+          150 km ka safar, seedha tere darwaze tak,<br>
+          Himmat nahi hui — wapas aa gaya, khali haath. 😔<br>
+          Par kuch rishtey toote nahi karte,<br>
+          Woh dil mein hamesha rehte hain. 💛
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group-card">
+    <div class="group-card-line">"Group toot gaya, sab alag ho gaye —</div>
+    <div class="group-card-line">Par tune wapas sab ko joda. 💛</div>
+    <div class="group-card-line">Kuch log sirf dost nahi hote,</div>
+    <div class="group-card-line highlight-line">Tu ghar hoti hai. 🏡"</div>
+  </div>
+
+  <div class="quote-card">
+    "Tune aakhir mujhe unblock kiya,<br>
+    Chalo ganeemat hai bhai... 😅<br>
+    Dekho aaj teri saari UPI payments karna,<br>
+    Sab mere hi haath hai!" 😅❤️
+  </div>
+
+  <div class="section-label"><span>⭐ Top Highlights</span><span>All 5-star memories</span></div>
+
+  <div class="highlight-card">
+    <div class="highlight-photo" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);padding:0;overflow:hidden">
+      <img src="highlight1.jpg" style="width:100%;height:auto;object-fit:contain;display:block" onerror="this.style.display='none'">
+    </div>
+    <div class="highlight-body">
+      <div><span class="hl-tag">Highlight 1</span></div>
+      Bhai, yeh wala roop dekho! Is photo ko dekh kar tu aaj Flipkart ki HR ban chuki hai. Dangerous look tha yaaar 😅
+    </div>
+  </div>
+
+  <div class="highlight-card">
+    <div class="highlight-photo" style="background:linear-gradient(135deg,#e8f0fe,#dce8fd);padding:0;overflow:hidden">
+      <img src="highlight2.jpg" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+    </div>
+    <div class="highlight-body">
+      <div><span class="hl-tag">Highlight 2</span></div>
+      Internship ke time pe tune ye photo bheji. Kasam se, ise dekhte hi mera dimaag kuch seconds ke liye totally blank ho gaya tha. Main bas stunned reh gaya tha. ❤️
+    </div>
+  </div>
+
+  <div class="section-label"><span>🎬 Favourite Clips</span><span></span></div>
+
+  <div class="video-card">
+    <video controls style="width:100%;height:140px;object-fit:cover;background:#111;display:block">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div class="video-body">Our favourite clip 🎬</div>
+  </div>
+
+  <!-- Sirf Tere Liye — entire content is INSIDE the secret letter -->
+  <div class="finale" onclick="openLetter()">
+    <h2>Sirf Tere Liye 🎂</h2>
+    <p style="opacity:.75;font-size:.9rem;margin-top:10px">Kuch baatein sirf tere liye hain —<br>jo sirf tu hi padh sakti hai. 💛</p>
+    <div class="finale-hint">🪬 Tap the seal to open your secret letter</div>
+  </div>
+</div>
+
+<!-- ══ GALLERY ══ -->
+<div class="view" id="view-gallery">
+  <div class="gallery-header">
+    <h2>📸 Photo Gallery</h2>
+    <p>Tap any photo to view full screen 💛</p>
+  </div>
+  <div class="polaroid-grid" id="polaroidGrid">
+    <!-- 8 polaroids generated by JS -->
+  </div>
+</div>
+
+<!-- ══ NICKNAMES (moved to account) ══ -->
+<!-- Not in nav anymore, accessible from Account -->
+
+<!-- ══ NOTIFS ══ -->
+<div class="view" id="view-notifs">
+  <div class="notif-header">
+    <span>🔔 Notifications</span>
+    <span>5 new</span>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon ni-pink">🎂</div>
+    <div>
+      <h4>Happy Birthday Mahi! 🎂</h4>
+      <p>Stop crying and start smiling — it's your special day. You deserve every good thing!</p>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon ni-blue">✅</div>
+    <div>
+      <h4>UPI Payment Cleared! ✅</h4>
+      <p>Don't worry, Panther is here to cover all your bills today. Happy Birthday discount — 100% off! 😄</p>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon ni-gold">🥲</div>
+    <div>
+      <h4>Date is Pending... 🥲</h4>
+      <p>Pehle haan, phir na — classic tera move! Date request: Submitted ✅ | Status: Ghosted 👻 | ETA: Unknown 😩</p>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon ni-green">😂</div>
+    <div>
+      <h4>Fuddu Log: 1 New Message</h4>
+      <p>"Mahi ka birthday hai aaj! Treat chahiye!" — The whole group is waiting 😂</p>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon ni-purple">❤️</div>
+    <div>
+      <h4>Memory Saved to Heart ❤️</h4>
+      <p>All the moments from The Journey of Us are safely stored forever.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACCOUNT ══ -->
+<div class="view" id="view-account">
+  <div class="acc-hero">
+    <div class="acc-avatar" id="accAvatar">
+      <img src="avatar.jpg" alt="Mahi" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:50%;display:block;">
+    </div>
+    <div class="acc-info">
+      <h2>Mahima (Mahi) ❤️</h2>
+      <p>Flipkart HR &nbsp;·&nbsp; Hisar &amp; Bhiwani</p>
+      <div class="acc-badge">✨ Lifetime Premium Member</div>
+    </div>
+  </div>
+  <div class="acc-list">
+    <div class="acc-row" onclick="showView('journey')">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#e8f0fe">💫</div>Our Journey Timeline</div>
+      <span class="acc-chevron">›</span>
+    </div>
+    <div class="acc-row" onclick="showMemoriesPopup()">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#fce4ec">📷</div>Favourite Memories</div>
+      <span class="acc-chevron">›</span>
+    </div>
+    <!-- Nicknames now here in Account -->
+    <div class="acc-row" onclick="showNicknamesOverlay()">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#fff8e1">🏷️</div>Special Nicknames</div>
+      <span class="acc-chevron">›</span>
+    </div>
+    <div class="acc-row" onclick="openUPI()">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#fff8e1">💛</div>Meri Mahi Ka UPI 💛</div>
+      <span class="acc-chevron">›</span>
+    </div>
+    <div class="acc-row" onclick="showToast('😂 Fuddu log hain hum — aur isi mein hamari jaan hai!')">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#e8f5e9">😂</div>Fuddu Log Group 😂</div>
+      <span class="acc-chevron">›</span>
+    </div>
+    <div class="acc-row" onclick="showToast('🥲 Date pending hai... Haan boli thi, phir na bol diya. Classic!')">
+      <div class="acc-row-left"><div class="acc-row-icon" style="background:#f3e5f5">🥲</div>Vada Pav Dates Pending 🥲</div>
+      <span class="acc-chevron">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NICKNAMES OVERLAY (from Account) ══ -->
+<div class="overlay-page" id="nicknamesOverlay">
+  <div class="ov-header">
+    <span class="back-btn" onclick="closeNicknamesOverlay()">‹</span>
+    <span>Special Nicknames 🏷️</span>
+  </div>
+  <div class="ov-scroll" style="padding:0 0 20px">
+    <div class="nick-header">
+      <h2>Special Nicknames 🏷️</h2>
+      <p>Every name is a story 💛</p>
+    </div>
+    <div class="nick-grid">
+      <div class="nick-card gold"><span class="nick-emoji">🎆</span><h3>Fuljhadi</h3><p>You light up the room wherever you go — always sparkling!</p></div>
+      <div class="nick-card pink"><span class="nick-emoji">✨</span><h3>Sparkle</h3><p>Hamesha chamakti reh aisi hi — never stop shining.</p></div>
+      <div class="nick-card blue"><span class="nick-emoji">👶</span><h3>Duggu's Masii</h3><p>The most caring masii in the whole world!</p></div>
+      <div class="nick-card green"><span class="nick-emoji">🌸</span><h3>Mahi</h3><p>Short, sweet, and unforgettable — just like you.</p></div>
+    </div>
+    <div class="nick-full"><span class="nick-emoji">🦁</span><h3>The Bhiwani Queen 👑</h3><p>Bhiwani se aaye, Hisar ko sajaye, Flipkart ko chalaye — aur sabke dil mein raj kare. Bas teri hi baat hai! 😄</p></div>
+  </div>
+</div>
+
+<!-- ══ MEMORY OVERLAY ══ -->
+<div class="overlay-page" id="memOverlay">
+  <div class="ov-header">
+    <span class="back-btn" onclick="closeMemory()">‹</span>
+    <span id="ovTitle">Memory</span>
+  </div>
+  <div class="ov-scroll">
+    <div class="ov-img-wrap" id="ovImgWrap">
+      <span class="big-emoji" id="ovEmoji">😊</span>
+    </div>
+    <div class="ov-details">
+      <h2 id="ovName"></h2>
+      <div class="ov-price">💛 Priceless</div>
+      <div class="offer-card" id="ovOffer"></div>
+      <div class="ov-desc" id="ovDesc"></div>
+      <div class="shayari-card">
+        <div class="shayari-label">✦ Shayari / Roast — Sirf Tere Liye 😄</div>
+        <div class="shayari-text" id="ovShayari"></div>
+      </div>
+    </div>
+  </div>
+  <div class="mem-action-bar">
+    <button class="btn-save" onclick="showToast('💛 Dil mein save kar li!')">💾 Dil Mein Save</button>
+    <button class="btn-unwrap" onclick="showConfetti()">🎁 Unwrap Gift</button>
+  </div>
+</div>
+
+<!-- ══ UPI OVERLAY ══ -->
+<div class="overlay-page" id="upiOverlay">
+  <div class="ov-header">
+    <span class="back-btn" onclick="closeUPI()">‹</span>
+    <span>Meri Mahi Ka UPI 💛</span>
+  </div>
+  <div class="ov-scroll">
+  <div class="upi-page">
+    <div class="upi-title">Panther's Payment Seva 💳</div>
+    <div class="upi-sub">Jab bhi QR maange — seedha ye bhejo 😄</div>
+    <div class="qr-frame">
+      <div class="qr-grid">
+        <div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div>
+        <div class="q b"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q w"></div>
+        <div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div>
+        <div class="q b"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div>
+        <div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q w"></div><div class="q w"></div>
+        <div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div>
+        <div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q b"></div><div class="q w"></div>
+        <div class="q w"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q w"></div><div class="q b"></div><div class="q w"></div><div class="q w"></div><div class="q b"></div>
+        <div class="q b"></div><div class="q w"></div><div class="q w"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div><div class="q b"></div>
+      </div>
+    </div>
+    <div class="upi-id-box">
+      <div><div class="upi-id-label">UPI ID</div><div class="upi-id-val">mahi@mahikartplus</div></div>
+      <button class="upi-copy-btn" onclick="copyUPI()">Copy</button>
+    </div>
+    <div class="upi-note">💬 <strong>Tera rule no. 1:</strong><br>Jab bhi Panther ko payment karni ho —<br>"QR code bhejo bhai!" 😂<br><br>Toh le tu — QR ready hai,<br>Ab koi excuse nahi chalega! 😄</div>
+    <div class="upi-amount-row">
+      <div class="upi-amount-box"><div class="amt-label">Total Owed 💸</div><div class="amt-val">∞</div></div>
+      <div class="upi-amount-box"><div class="amt-label">Love Transferred 💛</div><div class="amt-val">100%</div></div>
+    </div>
+    <button class="upi-pay-btn" onclick="showToast('💛 Payment of ∞ love sent!')">💚 &nbsp;Pay with Love</button>
+  </div>
+  </div>
+</div>
+
+<!-- CONFETTI POPUP -->
+<div class="popup-overlay" id="confettiPop">
+  <div class="popup-box">
+    <span class="gift-icon">🎁</span>
+    <h3>Happy Birthday, Mahi! 🎉</h3>
+    <p>Teri zindagi mein khushi ki koi kami na ho.<br>Har sapna poora ho, har dua qubool ho 💛</p>
+    <button class="popup-close" onclick="closeConfetti()">Shukriya 💛</button>
+  </div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- MEMORIES POPUP -->
+<div class="mem-popup-overlay" id="memPopup">
+  <div class="mem-popup-box">
+    <div class="mem-popup-top">
+      <span class="mem-icon">📸</span>
+      <h3>Favourite Memories 💛</h3>
+    </div>
+    <div class="mem-popup-body">
+      <div class="mem-hindi">Yaadein phone mein band nahi hoti,
+Har woh hansi, har woh pal —
+Jo humne saath jeya hai,
+Woh pixels mein nahi,
+Dil ki deewaroh pe likhi hain. 💛</div>
+      <div class="mem-english">Memories can't be captured in a photo or stored in a phone. They live in our minds, our experiences, our hearts — forever. 🌸</div>
+      <button class="mem-popup-close" onclick="closeMemoriesPopup()">Dil ne sun li 💛</button>
+    </div>
+  </div>
+</div>
+
+<div class="copy-toast" id="toast"></div>
+
+<!-- BOTTOM NAV — 5 items: Home, Journey, Gallery, Notifs, Account -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="showView('home')"><span class="nav-emoji">🏠</span>Home</div>
+  <div class="nav-item" id="nav-journey" onclick="showView('journey')"><span class="nav-emoji">💫</span>Journey</div>
+  <div class="nav-item" id="nav-gallery" onclick="showView('gallery')"><span class="nav-emoji">📸</span>Gallery</div>
+  <div class="nav-item" id="nav-notifs" onclick="showView('notifs')"><span class="nav-emoji">🔔</span>Notifs</div>
+  <div class="nav-item" id="nav-account" onclick="showView('account')"><span class="nav-emoji">👤</span>Account</div>
+</nav>
+
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div id="lightbox">
+  <div class="lb-backdrop" onclick="closeLightbox()"></div>
+  <div class="lb-card" id="lbCard">
+    <div class="lb-close" onclick="closeLightbox()">✕</div>
+    <div class="lb-img" id="lbImg"></div>
+    <div class="lb-nav">
+      <button class="lb-btn" onclick="lbNav(-1)">‹</button>
+      <button class="lb-btn" onclick="lbNav(1)">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SECRET LETTER ══ -->
+<div id="letterOverlay">
+  <div class="letter-wrap">
+    <div class="wax-seal-container">
+      <div class="wax-seal" id="waxSeal" onclick="breakSeal()">🪬</div>
+      <div class="seal-hint" id="sealHint">Tap the seal to open 💌</div>
+    </div>
+    <div class="envelope" id="envelope" style="display:none">
+      <button class="letter-close-btn" onclick="closeLetter()">✕</button>
+      <div class="letter-date">28 May 2026 · Hisar</div>
+      <div class="letter-text" id="letterText"></div>
+      <div class="letter-sig" id="letterSig" style="display:none">
+        <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#8B4513;margin-bottom:8px">— from Hramkhor 🐾</div>
+        <div style="font-family:'Dancing Script',cursive;font-size:1.75rem;line-height:1.5"><span style="background:linear-gradient(135deg,#e91e63,#ff9f00,#2874f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Happy Birthday meri Mahi</span> <span style="-webkit-text-fill-color:initial">🥳</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ STARFIELD ══
+(function(){
+  const sf = document.getElementById('starfield');
+  const W = window.innerWidth, H = window.innerHeight;
+  // Stars
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2.5+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;--delay:${Math.random()*4}s;--min-op:${.1+Math.random()*.3}`;
+    sf.appendChild(s);
+  }
+  // Shooting stars
+  function launchShootingStar(){
+    const s=document.createElement('div');
+    s.className='shooting-star';
+    const startX=Math.random()*80, startY=Math.random()*40;
+    const len=120+Math.random()*160;
+    const angle=(Math.random()*30+15)*(Math.PI/180);
+    const sx=Math.cos(angle)*len, sy=Math.sin(angle)*len;
+    s.style.cssText=`left:${startX}%;top:${startY}%;width:${len}px;--sd:${.8+Math.random()*.6}s;--sx:${sx}px;--sy:${sy}px;animation-delay:0s`;
+    sf.appendChild(s);
+    setTimeout(()=>s.remove(),(1.5+Math.random())*1000);
+  }
+  setInterval(launchShootingStar,2200);
+  launchShootingStar();
+  setTimeout(launchShootingStar,800);
+})();
+
+// ══ CAKE INTRO ══
+(function(){
+  const intro=document.getElementById('cakeIntro');
+  const colors=['#e53935','#fff','#bdbdbd','#ff1744','#ff9800'];
+  for(let i=0;i<70;i++){
+    const p=document.createElement('div');p.className='ci-piece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${2+Math.random()*3.5}s;animation-delay:${Math.random()*2.5}s;width:${6+Math.random()*9}px;height:${8+Math.random()*12}px;border-radius:${Math.random()>.5?'50%':'3px'};transform:rotate(${Math.random()*360}deg)`;
+    intro.appendChild(p);
+  }
+})();
+
+// ══ HAPPY BIRTHDAY MUSIC (Web Audio API) ══
+function playHappyBirthday(originX, originY){
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  // Happy Birthday melody: [frequency, duration]
+  const notes=[
+    [264,.3],[264,.15],[297,.45],[264,.45],[352,.45],[330,.9],
+    [264,.3],[264,.15],[297,.45],[264,.45],[396,.45],[352,.9],
+    [264,.3],[264,.15],[528,.45],[440,.45],[352,.45],[330,.45],[297,.9],
+    [466,.3],[466,.15],[440,.45],[352,.45],[396,.45],[352,.9]
+  ];
+  let t=ctx.currentTime+.05;
+  notes.forEach(([freq,dur])=>{
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='triangle';
+    osc.frequency.setValueAtTime(freq,t);
+    gain.gain.setValueAtTime(.18,t);
+    gain.gain.exponentialRampToValueAtTime(.001,t+dur*.9);
+    osc.start(t);osc.stop(t+dur);
+    t+=dur+.03;
+  });
+  // Floating music notes burst
+  const noteEmojis=['🎵','🎶','♪','♫','🎼','🎸'];
+  for(let i=0;i<12;i++){
+    setTimeout(()=>{
+      const n=document.createElement('div');
+      n.className='music-note';
+      n.textContent=noteEmojis[Math.floor(Math.random()*noteEmojis.length)];
+      n.style.cssText=`left:${originX+(-60+Math.random()*120)}px;top:${originY-20}px;animation-delay:${Math.random()*.4}s`;
+      document.body.appendChild(n);
+      setTimeout(()=>n.remove(),2000);
+    },i*80);
+  }
+}
+
+function tapFlame(){
+  const flameWrap=document.getElementById('ciFlameWrap');
+  const wish=document.getElementById('ciWish');
+  const hbd=document.getElementById('ciHbd');
+  // Play birthday music
+  const rect=flameWrap.getBoundingClientRect();
+  playHappyBirthday(rect.left+rect.width/2, rect.top+rect.height/2);
+  flameWrap.style.display='none';
+  wish.style.opacity='0';
+  hbd.classList.add('show');
+  const intro=document.getElementById('cakeIntro');
+  const colors=['#ffe500','#e53935','#fff','#2874f0','#ff9f00'];
+  for(let i=0;i<50;i++){
+    const p=document.createElement('div');p.className='ci-piece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.6}s;width:${7+Math.random()*10}px;height:${9+Math.random()*12}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    intro.appendChild(p);
+  }
+  setTimeout(()=>{
+    intro.classList.add('ci-fade');
+    // Fade out starfield too
+    document.getElementById('starfield').classList.add('fade-out');
+    setTimeout(()=>{
+      intro.remove();
+      setTimeout(()=>document.getElementById('starfield').remove(),1200);
+    },950);
+  },3800);
+}
+
+// SPLASH
+function closeSplash(){
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(()=>document.getElementById('splash').remove(),700);
+}
+setTimeout(closeSplash,3200);
+
+// NAV
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('nav-'+name);if(el)el.classList.add('active');
+}
+
+// SEARCH
+function toggleSearch(){const d=document.getElementById('searchDrop');d.style.display=d.style.display==='block'?'none':'block'}
+document.addEventListener('click',e=>{if(!e.target.closest('header'))document.getElementById('searchDrop').style.display='none'});
+
+// MEMORY OVERLAY
+const memories=[
+  {title:'That Cute Smile ❤️',emoji:'😊',bg:'linear-gradient(135deg,#ff9a9e,#fecfef)',offer:'🔒 Warning: Teri ek smile = brain stops working. Side effects include: staring, forgetting what you were saying, and smiling back like an idiot.',desc:'Teri smile mein ek alag hi jaadu hai. Koi bhi bura din teri ek hansi se theek ho jaata hai — ya toh aur bura ho jaata hai kyunki ab teri yaad bhi aati hai. 😅',shayari:`Teri smile dekh ke koi bhi pagal ho jaaye,\nPar tu khud itni serious rehti hai, kya baat hai bhai! 😂\nHR ki meeting mein agar muskura deti tu,\nToh sab employees khud resign de ke jaayein! 😄`},
+  {title:'Corporate HR Look 💼',emoji:'💼',bg:'linear-gradient(135deg,#667eea,#764ba2)',offer:'👑 Danger: This HR can make you feel guilty for being 2 minutes late — with just one look. No words needed.',desc:'Professional hai tu, capable hai tu — magar in sab se zyada, intimidating hai tu HR mode mein. Koi bhi employee seedha nahi dekh sakta teri taraf meeting mein. 😂',shayari:`Office mein aati hai tu jab bhi,\nSab log apni seat pe seedhe ho jaate hain. 😂\n"Kya kiya tune ye form?" — bus itna kaafi hai,\nGrown men bhi "Sorry ma'am" kehte nazar aate hain. 😅`},
+  {title:'The Stunning One ✨',emoji:'✨',bg:'linear-gradient(135deg,#f093fb,#f5576c)',offer:'✨ Rare Find — Teri khoobsurti sirf baahir ki nahi, andar se bhi chamakti hai.',desc:'Stunning word bhi chhota padta hai tere liye. Tu jo hai — woh words mein descript nahi hota. Aur ye romantic wala shayari hai, kyunki kabhi kabhi sach bhi bolna padta hai. 😄',shayari:`Koi lafz nahi mere paas jo tujhe bayan kare,\nMahi, teri khoobsurti dil ko hairaan kare.\nTaaron ne dekha, chand ne suna —\nPar teri ek jhalak sab ko aasaan kare. 💛`},
+  {title:'Epic Old Pic 📸',emoji:'📸',bg:'linear-gradient(135deg,#f6d365,#fda085)',offer:'⏳ Throwback Warning: This photo proves tu hamesha trouble rahi hai — even years ago. Evidence saved. 😂',desc:'Purani photos mein ek alag hi charm hota hai. Ye woh waqt tha jab tu thodi simple thi — abhi toh full corporate boss mode hai. Kaise itni fast upgrade hui? 😂',shayari:`Ye purani photo dekh ke ek hi sawaal hai,\n"Itni cute thi tu — toh itni strict HR kaise ban gayi?!" 😂\nWaqt ne kya kya kiya — se innocent face,\nAaj grown men tujhse form fill karaate hain bhai! 😅`},
+  {title:'Mahi Being Mahi 😄',emoji:'😄',bg:'linear-gradient(135deg,#43e97b,#38f9d7)',offer:'😄 Limited Edition — Sirf tu hi "haan" bol ke "na" kar sakti hai. One of a kind talent! 🥲',desc:'Teri apni ek personality hai jo kisi se match nahi karti. Woh silliness, woh genuine laughter — sab kuch original hai. Date ke liye haan bolna aur phir na bolna bhi original hai. 😅',shayari:`"Haan jaaungi" — teri ye baat thi,\nPhir 2 din baad "actually nahi" — classic tu 😩\nMeri to ye haalat hai bhai —\nDate request PENDING hai since ages, koi ek sun raha hai?! 🥲`},
+  {title:'Us, Always 🌙',emoji:'🌙',bg:'linear-gradient(135deg,#4facfe,#00f2fe)',offer:'💛 Eternal Bond — Koi distance, koi block, koi "na" — kuch nahi tods sakta ye.',desc:'Jo bhi hua — block, unblock, 150 km, group tootna, phir milna — is sab ke baad bhi hum yahan hain. Kuch rishtey aise hi hote hain. Stubborn. Just like you. 😄',shayari:`Tune block kiya, maine 150 km drive kiya, 😅\nPhir bhi hum yahan hain — kuch toh tha bhai.\nMahi, tujhse itni takraar ke baad bhi,\nDil mein teri jagah hamesha bani rahi. 💛`}
+];
+
+function openMemory(i){
+  const m=memories[i];
+  const photoSrc='photo'+(i+1)+'.jpg';
+  document.getElementById('ovTitle').textContent=m.title;
+  document.getElementById('ovEmoji').textContent=m.emoji;
+  document.getElementById('ovImgWrap').style.background=m.bg;
+  const ovPhoto=document.getElementById('ovPhoto');
+  if(ovPhoto){ovPhoto.style.display='none';}
+  document.getElementById('ovName').textContent=m.title;
+  document.getElementById('ovOffer').textContent=m.offer;
+  document.getElementById('ovDesc').textContent=m.desc;
+  document.getElementById('ovShayari').textContent=m.shayari;
+  const overlay=document.getElementById('memOverlay');
+  overlay.classList.add('open');
+  overlay.querySelector('.ov-scroll').scrollTop=0;
+  document.body.style.overflow='hidden';
+}
+function closeMemory(){document.getElementById('memOverlay').classList.remove('open');document.body.style.overflow='';}
+
+// UPI
+function openUPI(){document.getElementById('upiOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeUPI(){document.getElementById('upiOverlay').classList.remove('open');document.body.style.overflow='';}
+function copyUPI(){navigator.clipboard.writeText('mahi@mahikartplus').catch(()=>{});showToast('✅ UPI ID copied!')}
+
+// CONFETTI
+function showConfetti(){document.getElementById('confettiPop').classList.add('show');launchConfetti()}
+function closeConfetti(){document.getElementById('confettiPop').classList.remove('show');document.getElementById('confettiWrap').innerHTML=''}
+function launchConfetti(){
+  const wrap=document.getElementById('confettiWrap');wrap.innerHTML='';
+  const colors=['#ffe500','#2874f0','#e91e63','#ff9f00','#26a541','#fb641b','#fff'];
+  for(let i=0;i<90;i++){
+    const p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;transform:rotate(${Math.random()*360}deg);width:${8+Math.random()*8}px;height:${10+Math.random()*10}px;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    wrap.appendChild(p);
+  }
+}
+
+// MEMORIES POPUP
+function showMemoriesPopup(){document.getElementById('memPopup').classList.add('show');document.body.style.overflow='hidden';}
+function closeMemoriesPopup(){document.getElementById('memPopup').classList.remove('show');document.body.style.overflow='';}
+
+// NICKNAMES OVERLAY
+function showNicknamesOverlay(){document.getElementById('nicknamesOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeNicknamesOverlay(){document.getElementById('nicknamesOverlay').classList.remove('open');document.body.style.overflow='';}
+
+// AVATAR
+function handleAvatarUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const img=document.getElementById('accAvatarImg');
+    img.src=ev.target.result;img.style.display='block';
+    document.getElementById('accAvatarFallback').style.display='none';
+    showToast('✅ Photo updated!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// TOAST
+let tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ══ POLAROID GALLERY ══
+const polaroidData=[
+  {emoji:'😊',bg:'linear-gradient(135deg,#ff9a9e,#fecfef)'},
+  {emoji:'💼',bg:'linear-gradient(135deg,#667eea,#764ba2)'},
+  {emoji:'✨',bg:'linear-gradient(135deg,#f093fb,#f5576c)'},
+  {emoji:'📸',bg:'linear-gradient(135deg,#f6d365,#fda085)'},
+  {emoji:'😄',bg:'linear-gradient(135deg,#43e97b,#38f9d7)'},
+  {emoji:'🌙',bg:'linear-gradient(135deg,#4facfe,#00f2fe)'},
+  {emoji:'💛',bg:'linear-gradient(135deg,#ffe500,#ffcc00)'},
+  {emoji:'🌸',bg:'linear-gradient(135deg,#ff6b9d,#c44ddb)'},
+  {emoji:'🎉',bg:'linear-gradient(135deg,#f7971e,#ffd200)'},
+  {emoji:'❤️',bg:'linear-gradient(135deg,#e53935,#ff6f6f)'},
+];
+const polaroidImages=['gallery1.jpg','gallery2.jpg','gallery3.jpg','gallery4.jpg','gallery5.jpg','gallery6.jpg','gallery7.jpg','gallery8.jpg','gallery9.jpg','gallery10.jpg'];
+
+(function(){
+  const grid=document.getElementById('polaroidGrid');
+  polaroidData.forEach((d,i)=>{
+    // Hidden file input per card
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='image/*';inp.style.display='none';inp.id='pol-inp-'+i;
+    inp.onchange=function(e){
+      const file=e.target.files[0];if(!file)return;
+      const reader=new FileReader();
+      reader.onload=function(ev){
+        polaroidImages[i]=ev.target.result;
+        const photo=document.querySelector('#pol-'+i+' .polaroid-photo');
+        let img=photo.querySelector('img');
+        if(!img){img=document.createElement('img');photo.prepend(img);}
+        img.src=ev.target.result;
+        photo.classList.add('has-img');
+        const hint=photo.querySelector('.polaroid-upload-hint');
+        if(hint)hint.textContent='📷 Change photo';
+        showToast('✅ Photo added!');
+      };
+      reader.readAsDataURL(file);
+    };
+    document.body.appendChild(inp);
+
+    const div=document.createElement('div');
+    div.className='polaroid';
+    div.id='pol-'+i;
+    const imgTag=polaroidImages[i]?`<img src="${polaroidImages[i]}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`:'';
+    div.innerHTML=`<div class="polaroid-photo${polaroidImages[i]?' has-img':''}" style="background:${d.bg};position:relative">
+      ${imgTag}
+      <span class="polaroid-emoji" style="font-size:2.8rem;position:relative;z-index:1">${d.emoji}</span>
+      <div class="polaroid-upload-hint" style="position:relative;z-index:1">${polaroidImages[i]?'📷 Change photo':'📷 Add photo'}</div>
+    </div>`;
+
+    div.onclick=function(){
+      if(!polaroidImages[i]){
+        document.getElementById('pol-inp-'+i).click();
+      } else {
+        openLightbox(i);
+      }
+    };
+    // Long press to change photo after upload
+    let pressTimer;
+    div.addEventListener('touchstart',()=>{pressTimer=setTimeout(()=>document.getElementById('pol-inp-'+i).click(),600)});
+    div.addEventListener('touchend',()=>clearTimeout(pressTimer));
+
+    grid.appendChild(div);
+  });
+})();
+
+// ══ LIGHTBOX ══
+let lbCurrent=0;
+function openLightbox(i){
+  lbCurrent=i;
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function renderLightbox(){
+  const d=polaroidData[lbCurrent];
+  const img=document.getElementById('lbImg');
+  img.style.background=d.bg;
+  if(polaroidImages[lbCurrent]){
+    img.innerHTML=`<img src="${polaroidImages[lbCurrent]}" style="width:100%;max-height:72vh;object-fit:contain;display:block">`;
+  } else {
+    img.innerHTML=`<span style="font-size:5rem">${d.emoji}</span>`;
+  }
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function lbNav(dir){
+  lbCurrent=(lbCurrent+dir+polaroidData.length)%polaroidData.length;
+  const card=document.getElementById('lbCard');
+  card.style.animation='none';
+  requestAnimationFrame(()=>{card.style.animation='';card.style.animation='lbPop .25s cubic-bezier(.34,1.56,.64,1) both';});
+  renderLightbox();
+}
+
+// ══ SECRET LETTER ══
+const letterContent=`Mahi,
+
+Tu har birthday roti hai, par iss baar main chahta hu tu sirf hase. 😌
+
+Humne jo bhi moments sath milkar enjoy kiye woh badhiya moments the, aur pray from the god give us more special moments like that!!!
+
+I'm sorry agar mere se koi galti ho gayi ho ya hone wali ho. 😁
+
+Aaj toh tera birthday hai — karde wapas 624 rupaye. 🫠
+
+Mereko pata hai ki tereko pata hai tu sunder hai, per again bolna chahunga — tu kabhi kabhi baby doll lgti hai. 🫣
+
+Happy Birthday to the one who holds the group together.
+Happy Birthday to who helped and cared for me.
+Happy Birthday to hardworking girl.
+Happy Birthday to being exactly who you are.
+
+I am proud of you.`;
+
+let letterTyping=false, letterDone=false, typingInterval=null;
+
+function openLetter(){
+  document.getElementById('letterOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  // Reset state
+  const seal=document.getElementById('waxSeal');
+  const env=document.getElementById('envelope');
+  const hint=document.getElementById('sealHint');
+  seal.classList.remove('cracked');
+  seal.style.display='block';
+  hint.style.display='block';
+  env.style.display='none';
+  document.getElementById('letterText').innerHTML='';
+  document.getElementById('letterSig').style.display='none';
+  letterDone=false;
+  letterTyping=false;
+  if(typingInterval)clearInterval(typingInterval);
+}
+
+function breakSeal(){
+  const seal=document.getElementById('waxSeal');
+  const env=document.getElementById('envelope');
+  const hint=document.getElementById('sealHint');
+  if(letterTyping||letterDone)return;
+  // Crack animation
+  seal.classList.add('cracked');
+  // Small vibrate effect
+  seal.style.transition='transform .1s';
+  let shakes=0;
+  const shakeInt=setInterval(()=>{
+    seal.style.transform=`scale(.88) rotate(${-8+(Math.random()*6)}deg) translateX(${(-3+Math.random()*6)}px)`;
+    shakes++;
+    if(shakes>6){clearInterval(shakeInt);seal.style.display='none';hint.style.display='none';}
+  },60);
+  setTimeout(()=>{
+    env.style.display='block';
+    env.style.animation='lbPop .4s cubic-bezier(.34,1.56,.64,1) both';
+    startTypewriter();
+  },500);
+}
+
+function startTypewriter(){
+  if(letterTyping)return;
+  letterTyping=true;
+  const el=document.getElementById('letterText');
+  const cursor='<span class="cursor-blink">|</span>';
+  let i=0;
+  const formatted=letterContent.replace(/\n/g,'<br>');
+  const chars=letterContent.split('');
+  let html='';
+  typingInterval=setInterval(()=>{
+    if(i>=chars.length){
+      clearInterval(typingInterval);
+      letterDone=true;
+      letterTyping=false;
+      el.innerHTML=formatted.replace(/\n/g,'<br>');
+      document.getElementById('letterSig').style.display='block';
+      return;
+    }
+    const ch=chars[i];
+    if(ch==='\n')html+='<br>';
+    else html+=ch==='<'?'&lt;':ch==='>'?'&gt;':ch==='&'?'&amp;':ch;
+    el.innerHTML=html+cursor;
+    i++;
+    // Scroll as text types
+    const env=document.getElementById('envelope');
+    env.scrollTop=env.scrollHeight;
+  },22);
+}
+
+function closeLetter(){
+  document.getElementById('letterOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  if(typingInterval)clearInterval(typingInterval);
+  letterTyping=false;
+}
+// Close letter on backdrop tap
+document.getElementById('letterOverlay').addEventListener('click',function(e){if(e.target===this)closeLetter();});
+</script>
+</body>
+</html>
